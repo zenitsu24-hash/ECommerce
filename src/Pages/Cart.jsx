@@ -2,11 +2,14 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../Context/ShopContext'
 import Title from '../Components/Title';
 import { assets } from '../assets/assets';
+import CartTotal from '../Components/CartTotal';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
 
-  const { products, currency, cartItems} = useContext(ShopContext);
+  const { products, currency, cartItems, updateCart} = useContext(ShopContext);
   const [cartData, setCartData] = useState([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     const tempData = []
@@ -48,12 +51,21 @@ const Cart = () => {
                     </div>
                   </div>
                 </div>
-                <input className='border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1' type='number' min={1} defaultValue={item.quantity}/>
-                <img src={assets.bin_icon} alt='' className='w-4 mr-4 sm:w-5 cursor-pointer'/>
+                <input onChange={(e) => e.target.value === '' || e.target.value === 0 ? null : updateCart(item._id, item.size, Number(e.target.value))} className='border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1' type='number' min={1} defaultValue={item.quantity}/>
+                <img onClick={() => updateCart(item._id,item.size,0)} src={assets.bin_icon} alt='' className='w-4 mr-4 sm:w-5 cursor-pointer'/>
               </div>
             )
           })
         }
+      </div>
+
+      <div className='flex justify-end my-20'>
+        <div className='w-full sm:w-[450px]'>
+          <CartTotal/>
+          <div className='w-full text-end'>
+            <button onClick={() => navigate('/PlaceOrder')} className='bg-black text-white text-sm my-8 px-8 py-3'>Proceed To Checkout</button>
+          </div>
+        </div>
       </div>
     </div>
   )

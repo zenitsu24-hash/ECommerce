@@ -7,7 +7,7 @@ export const ShopContext = createContext();
 const ShopContextProvider = (props) => {
 
     const currency = '$';
-    const delivery_fee = 10;
+    const delivery_fee = 10.76;
     const [search, setSearch] = useState('')
     const [showSearch, setShowSearch] = useState(false);
     const [cartItems, setCartItems] = useState({});
@@ -35,6 +35,13 @@ const ShopContextProvider = (props) => {
         setCartItems(cartdata)
     }
 
+    const updateCart = (itemId,size,quantity) => {
+
+        let cartdata = structuredClone(cartItems)
+        cartdata[itemId][size] = quantity
+        setCartItems(cartdata);
+    }
+
     useEffect(() => {
         console.log(cartItems);
     }, [cartItems])
@@ -56,12 +63,31 @@ const ShopContextProvider = (props) => {
         return totalcount;
     }
 
+    const getTotalCart = () => {
+        let totalcart = 0;
+
+        for(const items in cartItems){
+            let itemInfo = products.find((product) => product._id === items)
+            for (const item in cartItems[items]){
+                try {
+                    if(cartItems[items][item] > 0){
+                        totalcart += itemInfo.price * cartItems[items][item]
+                    }
+                } catch (error) {
+                    
+                }
+            }
+        }
+        return totalcart;
+    }
+
     const attribute = {
         products, currency, delivery_fee,
         search, setSearch, 
         showSearch, setShowSearch,
         AddToCart, cartItems,
-        getcount
+        getcount, updateCart,
+        getTotalCart
     }
 
     return(
